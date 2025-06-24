@@ -1,0 +1,11 @@
+Metric,Value
+Average Depth Improvement,+0.5
+Average Gates Improvement,+1.2
+Average Error Improvement,+0.0025
+Depth Success Rate (%),12.5
+Error Success Rate (%),12.5
+Average Time Ratio,1.32
+Best Depth Improvement,+4
+Best Error Improvement,+0.0200
+Worst Depth Case,+0
+Worst Error Case,+0.0000

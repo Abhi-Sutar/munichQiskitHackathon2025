@@ -1,0 +1,9 @@
+Circuit Name,Qubits,Custom Depth,Default Depth,Depth Δ,Custom Error,Default Error,Error Δ
+random_circuit_1_4q_8d,4,53,61,8,0.265,0.305,0.04
+random_circuit_2_2q_11d,2,70,70,0,0.35,0.35,0.0
+random_circuit_3_4q_9d,4,61,61,0,0.305,0.305,0.0
+random_circuit_4_2q_11d,2,70,70,0,0.35,0.35,0.0
+random_circuit_5_3q_7d,3,51,51,0,0.255,0.255,0.0
+random_circuit_6_4q_7d,4,49,57,8,0.245,0.285,0.04
+random_circuit_7_4q_9d,4,59,59,0,0.295,0.295,0.0
+random_circuit_8_4q_10d,4,57,57,0,0.285,0.285,0.0

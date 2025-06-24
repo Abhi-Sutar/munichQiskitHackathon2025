@@ -27,6 +27,7 @@ from custom_pass import get_custom_pass_manager
 class CircuitMetrics:
     """Data structure to store circuit performance metrics."""
     depth: int
+    num_qbits: int
     num_gates: int
     num_cx: int
     num_single_qubit_gates: int
