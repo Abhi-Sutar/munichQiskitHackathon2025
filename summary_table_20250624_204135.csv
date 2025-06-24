@@ -1,0 +1,13 @@
+Circuit Name,Original,Custom Pass,Default Qiskit,Improvement,Custom Time (s),Default Time (s)
+random_circuit_1_6q_12d,33,78,85,7,0.0458,0.0182
+random_circuit_2_7q_9d,24,61,48,-13,0.0185,0.0194
+random_circuit_3_4q_7d,20,58,54,-4,0.0171,0.0167
+random_circuit_4_5q_12d,34,97,89,-8,0.0181,0.017
+random_circuit_5_7q_8d,23,36,42,6,0.018,0.0182
+random_circuit_6_5q_10d,29,67,62,-5,0.0175,0.0174
+random_circuit_7_7q_6d,17,33,33,0,0.0244,0.0248
+random_circuit_8_6q_10d,29,76,76,0,0.0184,0.0196
+random_circuit_9_4q_9d,26,44,44,0,0.0097,0.0085
+random_circuit_10_3q_14d,43,109,103,-6,0.0172,0.0176
+random_circuit_11_7q_13d,33,72,56,-16,0.0212,0.0192
+random_circuit_12_3q_14d,43,90,90,0,0.0184,0.0171
