@@ -402,6 +402,46 @@ def create_benchmark_circuit():
     qc.name = "GHZ_Benchmark_Circuit"
     return qc
 
+def create_n_qubit_ghz_crcuit(n_qubits, delay_qubit=None, delay_duration=5000):
+    """
+    Creates an n-qubit GHZ circuit with optional delay.
+    
+    Args:
+        n_qubits (int): Number of qubits for the GHZ state (must be >= 2)
+        delay_qubit (int, optional): Index of qubit to add delay to (0 to n_qubits-1)
+                                   If None, a random qubit will be selected
+        delay_duration (int): Delay duration in dt units (default: 5000)
+    
+    Returns:
+        QuantumCircuit: n-qubit GHZ circuit with measurements
+        
+    The GHZ state created is: |00...0⟩ + |11...1⟩ (unnormalized)
+    """
+    if n_qubits < 2:
+        raise ValueError("n_qubits must be at least 2 for a GHZ state.")
+    
+    qc = QuantumCircuit(n_qubits, n_qubits)  # n qubits, n classical bits
+    qc.h(0)  # Put first qubit in superposition
+
+    # Entangle all other qubits with the first one
+    for i in range(1, n_qubits):
+        qc.cx(i-1, i)  # CNOT from previous qubit to current
+
+    # Add a delay to create a vulnerable period for the watchdog
+    if delay_qubit is None:
+        delay_qubit = np.random.randint(1, n_qubits-1)  # Randomly select a qubit for delay
+    
+    if delay_qubit < 0 or delay_qubit >= n_qubits:
+        raise ValueError(f"delay_qubit must be between 0 and {n_qubits-1}, got {delay_qubit}.")
+    qc.delay(delay_duration, delay_qubit, "dt")  # Add delay on specified qubit
+
+    # Measure all qubits
+    qc.measure(list(range(n_qubits)), list(range(n_qubits)))
+
+    qc.name = f"GHZ_{n_qubits}Q_Circuit{delay_qubit}_D{delay_duration}"
+
+    return qc
+
 def post_select_results(counts, herald_bit_index, num_data_clbits):
     """Filters a counts dictionary by checking if the herald bit is '0'."""
     new_counts = {}
@@ -445,7 +485,7 @@ def expand_to_5bit_with_herald_0(counts_4bit):
 
 def normalize_counts(counts):
     total = sum(counts.values())
-    return {outcome: count/total for outcome, count in counts.items()}
+    return {outcome: np.float64(count/total) for outcome, count in counts.items()}
 
 def get_5bit_probs_for_post_selected(ps_counts_4bit, raw_counts_5bit):
     """Convert post-selected 4-bit data to 5-bit probabilities, zeroing herald='1' states"""
