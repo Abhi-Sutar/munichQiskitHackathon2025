@@ -5,7 +5,6 @@ import seaborn as sns
 from qiskit import QuantumCircuit, transpile, ClassicalRegister, QuantumRegister
 from qiskit.transpiler import PassManager
 from qiskit.transpiler.basepasses import TransformationPass
-from qiskit.transpiler.passes import ASAPScheduleAnalysis
 from qiskit.dagcircuit import DAGCircuit
 from qiskit.circuit.library import CXGate, Measure, Reset, HGate
 from qiskit.transpiler import InstructionDurations
@@ -13,6 +12,7 @@ from qiskit.circuit import Delay
 from qiskit.quantum_info import hellinger_fidelity, Statevector
 from qiskit.visualization import plot_histogram
 from qiskit.transpiler.passes import (
+    ASAPScheduleAnalysis,
     UnitarySynthesis,
     BasisTranslator,
     Optimize1qGatesDecomposition,
@@ -466,7 +466,7 @@ def create_benchmark_circuit():
     return qc
 
 
-def create_n_qubit_ghz_crcuit(n_qubits, delay_qubit=None, delay_duration=5000):
+def create_n_qubit_ghz_circuit(n_qubits, delay_qubit=None, delay_duration=5000):
     """
     Creates an n-qubit GHZ circuit with optional delay.
 
@@ -494,7 +494,7 @@ def create_n_qubit_ghz_crcuit(n_qubits, delay_qubit=None, delay_duration=5000):
     # Add a delay to create a vulnerable period for the watchdog
     if delay_qubit is None:
         delay_qubit = np.random.randint(
-            1, n_qubits - 1
+            1, n_qubits
         )  # Randomly select a qubit for delay
 
     if delay_qubit < 0 or delay_qubit >= n_qubits:
@@ -581,10 +581,54 @@ def get_5bit_probs_for_post_selected(ps_counts_4bit, raw_counts_5bit):
 
     return all_5bit_states
 
-def ghz_fidelity(probs):
-    p_0000 = probs.get("00000", 0.0)
-    p_1111 = probs.get("01111", 0.0)
-    return (p_0000 + p_1111)
+
+def ghz_fidelity(probs, n_qubits=None, has_herald=False, herald_bit_position=0):
+    """
+    Calculate GHZ fidelity for n-qubit systems, with optional herald bit handling.
+
+    Args:
+        probs (dict): Probability distribution with state strings as keys
+        n_qubits (int, optional): Total number of qubits. If None, auto-detected from keys
+        has_herald (bool): Whether the system has a herald bit that must be '0'
+        herald_bit_position (int): Position of herald bit (0=leftmost, -1=rightmost)
+
+    Returns:
+        float: GHZ fidelity (P(|00...0⟩) + P(|11...1⟩)) with herald='0' constraint
+    """
+    if not probs:
+        return 0.0
+
+    # Auto-detect total number of qubits if not provided
+    if n_qubits is None:
+        sample_key = next(iter(probs.keys()))
+        n_qubits = len(sample_key)
+
+    if has_herald:
+        # Calculate data qubit count (excluding herald)
+        n_data_qubits = n_qubits - 1
+
+        # Generate GHZ state strings for data qubits
+        data_state_0 = "0" * n_data_qubits  # |00...0⟩
+        data_state_1 = "1" * n_data_qubits  # |11...1⟩
+
+        # Create full state strings with herald='0'
+        if herald_bit_position == 0:  # Herald is leftmost bit
+            ghz_state_0 = "0" + data_state_0  # 0|00...0⟩
+            ghz_state_1 = "0" + data_state_1  # 0|11...1⟩
+        else:  # Herald is rightmost bit (herald_bit_position == -1)
+            ghz_state_0 = data_state_0 + "0"  # |00...0⟩0
+            ghz_state_1 = data_state_1 + "0"  # |11...1⟩0
+    else:
+        # No herald bit - all qubits are data qubits
+        ghz_state_0 = "0" * n_qubits  # |00...0⟩
+        ghz_state_1 = "1" * n_qubits  # |11...1⟩
+
+    # Calculate GHZ fidelity
+    p_0000 = probs.get(ghz_state_0, 0.0)
+    p_1111 = probs.get(ghz_state_1, 0.0)
+
+    return p_0000 + p_1111
+
 
 def run_benchmark():
     """Executes the full benchmark protocol using the improved logic structure."""
