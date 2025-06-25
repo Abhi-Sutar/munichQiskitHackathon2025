@@ -1,4 +1,3 @@
-
 from qiskit.providers import Backend
 from qiskit_ibm_runtime.fake_provider import Backend
 
