@@ -6,7 +6,7 @@ from qiskit import QuantumCircuit, transpile, ClassicalRegister, QuantumRegister
 from qiskit.transpiler import PassManager
 from qiskit.transpiler.basepasses import TransformationPass
 from qiskit.dagcircuit import DAGCircuit
-from qiskit.circuit.library import CXGate, Measure, Reset, HGate
+from qiskit.circuit.library import CXGate, Measure, HGate
 from qiskit.transpiler import InstructionDurations
 from qiskit.circuit import Delay
 from qiskit.quantum_info import hellinger_fidelity, Statevector
@@ -14,7 +14,6 @@ from qiskit.visualization import plot_histogram
 from qiskit.transpiler.passes import (
     ASAPScheduleAnalysis,
     UnitarySynthesis,
-    BasisTranslator,
     Optimize1qGatesDecomposition,
 )
 from qiskit_aer import AerSimulator
@@ -815,7 +814,7 @@ def run_benchmark():
     watchdog_counts = watchdog_result.get_counts()
     memory = watchdog_result.get_memory()
 
-    print(f"   Sample watchdog outcomes (first 5):")
+    print("   Sample watchdog outcomes (first 5):")
     sample_outcomes = list(watchdog_counts.keys())[:5]
     for outcome in sample_outcomes:
         print(f"     {outcome} -> {watchdog_counts[outcome]} counts")
@@ -860,7 +859,7 @@ def run_benchmark():
 
     # E. Compare Results
     print("\n--- Final Benchmark Results ---")
-    print(f"Ideal Reference:              Perfect (1.0000)")
+    print("Ideal Reference:              Perfect (1.0000)")
     print(f"Baseline Fidelity:            {baseline_fidelity:.4f}")
     print(f"Watchdog Raw Fidelity:        {watchdog_fidelity:.4f}")
     print(f"Watchdog Post-Selected:       {watchdog_ps_fidelity:.4f}")
@@ -901,14 +900,14 @@ def run_benchmark():
         )
 
     # Print shot statistics
-    print(f"   Shot statistics:")
+    print("   Shot statistics:")
     print(f"   - Baseline shots: {sum(baseline_counts.values())}")
     print(f"   - Watchdog raw shots: {sum(watchdog_counts.values())}")
     print(f"   - Watchdog post-selected shots: {sum(watchdog_ps_counts.values())}")
 
     # Create comprehensive histogram with all normalized distributions including ideal
     # Note: GHZ values will be calculated from table and updated in the final output
-    legend = [f"Ideal", f"Baseline", f"Watchdog Raw", f"Watchdog PS"]
+    legend = ["Ideal", "Baseline", "Watchdog Raw", "Watchdog PS"]
     hist_data = [
         ideal_5bit_probs,
         baseline_5bit_probs,
@@ -1040,33 +1039,33 @@ def run_benchmark():
     watchdog_ps_ghz_fid = ps_p_0000 + ps_p_1111
 
     # Print GHZ analysis with values directly from table
-    print(f"Ideal (Noise-Free):")
+    print("Ideal (Noise-Free):")
     print(f"  P(|0000⟩): {ideal_p_0000:.4f}")
     print(f"  P(|1111⟩): {ideal_p_1111:.4f}")
     print(f"  GHZ Fidelity: {ideal_ghz_fid:.4f}")
 
-    print(f"Baseline:")
+    print("Baseline:")
     print(f"  P(|0000⟩): {baseline_p_0000:.4f}")
     print(f"  P(|1111⟩): {baseline_p_1111:.4f}")
     print(f"  GHZ Fidelity: {baseline_ghz_fid:.4f}")
 
-    print(f"Watchdog Raw:")
+    print("Watchdog Raw:")
     print(f"  P(|0000⟩): {raw_p_0000:.4f}")
     print(f"  P(|1111⟩): {raw_p_1111:.4f}")
     print(f"  GHZ Fidelity: {watchdog_raw_ghz_fid:.4f}")
 
-    print(f"Watchdog Post-Selected:")
+    print("Watchdog Post-Selected:")
     print(f"  P(|0000⟩): {ps_p_0000:.4f}")
     print(f"  P(|1111⟩): {ps_p_1111:.4f}")
     print(f"  GHZ Fidelity: {watchdog_ps_ghz_fid:.4f}")
 
-    print(f"\nLegend:")
-    print(f"* = GHZ states (|0000⟩ or |1111⟩)")
-    print(f"Ideal: Noise-free perfect GHZ state")
-    print(f"Baseline: Noisy with Qiskit optimization_level=3")
-    print(f"Raw: Noisy with watchdog transpiler (no post-selection)")
-    print(f"PS: Noisy with watchdog transpiler (post-selected on herald='0')")
-    print(f"Herald bit is leftmost, data bits are rightmost 4 bits")
+    print("\nLegend:")
+    print("* = GHZ states (|0000⟩ or |1111⟩)")
+    print("Ideal: Noise-free perfect GHZ state")
+    print("Baseline: Noisy with Qiskit optimization_level=3")
+    print("Raw: Noisy with watchdog transpiler (no post-selection)")
+    print("PS: Noisy with watchdog transpiler (post-selected on herald='0')")
+    print("Herald bit is leftmost, data bits are rightmost 4 bits")
 
     print("\n--- Benchmark Complete ---")
 
